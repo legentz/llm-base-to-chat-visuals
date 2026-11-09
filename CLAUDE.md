@@ -50,7 +50,9 @@ D3 v7, KaTeX (rendered at prerender time), Vitest. SvelteKit config lives in `vi
 
 - Workflow per chapter: research note (cheap agent) → build → SOTA review by a separate agent → link check → PR.
 - Never commit to `main` directly; never force-push `main`. Each branch → `gh pr create` → wait for CI
-  (`gh pr checks --watch`) → `gh pr merge --merge --delete-branch=false` (keep branches as history).
+  (`gh pr checks --watch`) → hand the PR link + summary to the user. **The user reviews and merges every PR on
+  GitHub; the agent never merges.** Start the next branch from `main` once the previous PR is merged; if it isn't
+  merged yet, branch from the previous branch and say so in the PR body.
 - Repo: https://github.com/legentz/llm-base-to-chat-visuals · live: https://legentz.github.io/llm-base-to-chat-visuals/
   (Pages deploys from `main` via `.github/workflows/deploy.yml`).
 - Visual check without the Chrome extension: `npx http-server@14.1.1 build -p 4174 -s` then headless Chrome
