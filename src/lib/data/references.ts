@@ -32,6 +32,88 @@ export const references: Reference[] = [
 		url: 'https://arxiv.org/abs/2203.02155',
 		venue: 'NeurIPS 2022',
 		cite: 'Ouyang et al., 2022'
+	},
+	{
+		id: 'hf-chat-templates',
+		authors: 'Hugging Face',
+		year: 2025,
+		title: 'Chat templates (Transformers documentation)',
+		url: 'https://huggingface.co/docs/transformers/main/en/chat_templating',
+		cite: 'HF docs, Chat templates'
+	},
+	{
+		id: 'urial',
+		authors: 'Bill Yuchen Lin, Abhilasha Ravichander, Ximing Lu, et al.',
+		year: 2023,
+		title: 'The Unlocking Spell on Base LLMs: Rethinking Alignment via In-Context Learning',
+		url: 'https://arxiv.org/abs/2312.01552',
+		cite: 'Lin et al., 2023'
+	},
+	{
+		id: 'llama3',
+		authors: 'Aaron Grattafiori, Abhimanyu Dubey, Abhinav Jauhri, et al.',
+		year: 2024,
+		title: 'The Llama 3 Herd of Models',
+		url: 'https://arxiv.org/abs/2407.21783',
+		cite: 'Grattafiori et al., 2024'
+	},
+	{
+		id: 'olmo2',
+		authors: 'Team OLMo, Pete Walsh, Luca Soldaini, Dirk Groeneveld, et al.',
+		year: 2024,
+		title: '2 OLMo 2 Furious',
+		url: 'https://arxiv.org/abs/2501.00656',
+		cite: 'Team OLMo, 2024'
+	},
+	{
+		id: 'olmo3',
+		authors: 'Team Olmo',
+		year: 2025,
+		title: 'Olmo 3',
+		url: 'https://arxiv.org/abs/2512.13961',
+		cite: 'Team Olmo, 2025'
+	},
+	{
+		id: 'qwen3',
+		authors: 'An Yang, Anfeng Li, Baosong Yang, et al.',
+		year: 2025,
+		title: 'Qwen3 Technical Report',
+		url: 'https://arxiv.org/abs/2505.09388',
+		cite: 'Yang et al., 2025'
+	},
+	{
+		id: 'qwen3-8b-card',
+		authors: 'Qwen Team',
+		year: 2025,
+		title: 'Qwen3-8B model card',
+		url: 'https://huggingface.co/Qwen/Qwen3-8B',
+		cite: 'Qwen3-8B card'
+	},
+	{
+		id: 'smollm3',
+		authors: 'Elie Bakouch, et al. (Hugging Face)',
+		year: 2025,
+		title: 'SmolLM3: smol, multilingual, long-context reasoner',
+		url: 'https://huggingface.co/blog/smollm3',
+		cite: 'Bakouch et al., 2025'
+	},
+	{
+		id: 'nucleus',
+		authors: 'Ari Holtzman, Jan Buys, Li Du, Maxwell Forbes, Yejin Choi',
+		year: 2019,
+		title: 'The Curious Case of Neural Text Degeneration',
+		url: 'https://arxiv.org/abs/1904.09751',
+		venue: 'ICLR 2020',
+		cite: 'Holtzman et al., 2019'
+	},
+	{
+		id: 'minp',
+		authors: 'Minh Nhat Nguyen, Andrew Baker, Clement Neo, Allen Roush, et al.',
+		year: 2024,
+		title: 'Turning Up the Heat: Min-p Sampling for Creative and Coherent LLM Outputs',
+		url: 'https://arxiv.org/abs/2407.01082',
+		venue: 'ICLR 2025',
+		cite: 'Nguyen et al., 2024'
 	}
 ];
 

@@ -36,7 +36,7 @@ export const chapters: Chapter[] = [
 		short: 'Base',
 		blurb: 'A pretrained model continues documents. It does not answer.',
 		stage: 'foundation',
-		ready: false
+		ready: true
 	},
 	{
 		slug: 'sft',
@@ -121,9 +121,11 @@ export const chapters: Chapter[] = [
 	}
 ];
 
+/** Previous/next *published* chapters (unpublished ones have no route yet, so no link). */
 export function neighbours(slug: string): { prev?: Chapter; next?: Chapter } {
-	const i = chapters.findIndex((c) => c.slug === slug);
-	return { prev: chapters[i - 1], next: chapters[i + 1] };
+	const live = chapters.filter((c) => c.ready || c.slug === slug);
+	const i = live.findIndex((c) => c.slug === slug);
+	return { prev: live[i - 1], next: live[i + 1] };
 }
 
 /** Base-path-aware link to a chapter (each chapter is its own route folder: src/routes/<slug>/). */
