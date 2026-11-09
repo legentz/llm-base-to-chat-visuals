@@ -1,5 +1,7 @@
 # LLM Base-to-Chat Visuals
 
+**Live site:** https://legentz.github.io/llm-base-to-chat-visuals/
+
 An interactive, **simulated** explainer of how a base (pretrained) LLM becomes a chat / instruct
 model, and how community variants on Hugging Face (LoRA fine-tunes, abliterated models, merges,
 distilled models) are produced. It's inspired by
