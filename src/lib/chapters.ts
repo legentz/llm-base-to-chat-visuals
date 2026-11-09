@@ -54,7 +54,7 @@ export const chapters: Chapter[] = [
 		short: 'LoRA',
 		blurb: 'Train a low-rank update ΔW = BA instead of every weight.',
 		stage: 'efficiency',
-		ready: false
+		ready: true
 	},
 	{
 		slug: 'rlhf',

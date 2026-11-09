@@ -156,6 +156,94 @@ export const references: Reference[] = [
 		title: 'SmolLM2: When Smol Goes Big — Data-Centric Training of a Small Language Model',
 		url: 'https://arxiv.org/abs/2502.02737',
 		cite: 'Ben Allal et al., 2025'
+	},
+	{
+		id: 'lora',
+		authors:
+			'Edward J. Hu, Yelong Shen, Phillip Wallis, Zeyuan Allen-Zhu, Yuanzhi Li, Shean Wang, Lu Wang, Weizhu Chen',
+		year: 2021,
+		title: 'LoRA: Low-Rank Adaptation of Large Language Models',
+		url: 'https://arxiv.org/abs/2106.09685',
+		venue: 'ICLR 2022',
+		cite: 'Hu et al., 2021'
+	},
+	{
+		id: 'qlora',
+		authors: 'Tim Dettmers, Artidoro Pagnoni, Ari Holtzman, Luke Zettlemoyer',
+		year: 2023,
+		title: 'QLoRA: Efficient Finetuning of Quantized LLMs',
+		url: 'https://arxiv.org/abs/2305.14314',
+		venue: 'NeurIPS 2023',
+		cite: 'Dettmers et al., 2023'
+	},
+	{
+		id: 'rslora',
+		authors: 'Damjan Kalajdzievski',
+		year: 2023,
+		title: 'A Rank Stabilization Scaling Factor for Fine-Tuning with LoRA',
+		url: 'https://arxiv.org/abs/2312.03732',
+		cite: 'Kalajdzievski, 2023'
+	},
+	{
+		id: 'dora',
+		authors:
+			'Shih-Yang Liu, Chien-Yi Wang, Hongxu Yin, Pavlo Molchanov, Yu-Chiang Frank Wang, Kwang-Ting Cheng, Min-Hung Chen',
+		year: 2024,
+		title: 'DoRA: Weight-Decomposed Low-Rank Adaptation',
+		url: 'https://arxiv.org/abs/2402.09353',
+		venue: 'ICML 2024',
+		cite: 'Liu et al., 2024'
+	},
+	{
+		id: 'lora-without-regret',
+		authors: 'John Schulman and Thinking Machines Lab',
+		year: 2025,
+		title: 'LoRA Without Regret',
+		url: 'https://thinkingmachines.ai/blog/lora/',
+		venue: 'Thinking Machines Lab: Connectionism',
+		cite: 'Schulman et al., 2025'
+	},
+	{
+		id: 'peft-lora',
+		authors: 'Hugging Face',
+		year: 2025,
+		title: 'LoRA (PEFT documentation)',
+		url: 'https://huggingface.co/docs/peft/main/en/developer_guides/lora',
+		cite: 'PEFT docs, LoRA'
+	},
+	{
+		id: 'hf-model-cards',
+		authors: 'Hugging Face',
+		year: 2025,
+		title: 'Model Cards: specifying a base model (Hub documentation)',
+		url: 'https://huggingface.co/docs/hub/model-cards#specifying-a-base-model',
+		cite: 'HF Hub docs, Model Cards'
+	},
+	{
+		id: 'saxe-linear',
+		authors: 'Andrew M. Saxe, James L. McClelland, Surya Ganguli',
+		year: 2013,
+		title: 'Exact solutions to the nonlinear dynamics of learning in deep linear neural networks',
+		url: 'https://arxiv.org/abs/1312.6120',
+		venue: 'ICLR 2014',
+		cite: 'Saxe et al., 2013'
+	},
+	{
+		id: 'peft-kbit',
+		authors: 'Hugging Face',
+		year: 2025,
+		title: 'prepare_model_for_kbit_training (PEFT source, src/peft/utils/other.py)',
+		url: 'https://github.com/huggingface/peft/blob/main/src/peft/utils/other.py',
+		cite: 'PEFT source, kbit training'
+	},
+	{
+		id: 'lora-learns-less',
+		authors: 'Dan Biderman, Jacob Portes, Jose Javier Gonzalez Ortiz, et al.',
+		year: 2024,
+		title: 'LoRA Learns Less and Forgets Less',
+		url: 'https://arxiv.org/abs/2405.09673',
+		venue: 'TMLR 2024',
+		cite: 'Biderman et al., 2024'
 	}
 ];
 
