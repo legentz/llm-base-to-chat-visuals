@@ -52,11 +52,12 @@
 	<h3>Starting at zero, ending with no trace</h3>
 	<p>
 		<Tex expr="A" /> starts random and <Tex expr="B" /> starts at zero, so <Tex expr="BA = 0" /> and the
-		adapted model is <em>exactly</em> the base model at step 0 <Cite id="lora" />. (PEFT's default
-		uses a Kaiming-uniform <Tex expr="A" />; the paper used a Gaussian <Cite id="peft-lora" />.)
-		Press play on the toy: at step 0 the middle heatmap is blank. After training, the update can be
-		merged into the weights, <Tex expr={String.raw`W = W_0 + \tfrac{\alpha}{r}BA`} />, so inference
-		costs nothing extra. In PEFT that is <code>merge_and_unload()</code>
+		adapted model is <em>exactly</em> the base model at step 0. The paper initialised
+		<Tex expr="A" /> from a Gaussian <Cite id="lora" />; PEFT's default is Kaiming-uniform <Cite
+			id="peft-lora"
+		/>. Press play on the toy: at step 0 the middle heatmap is blank. After training, the update can
+		be merged into the weights, <Tex expr={String.raw`W = W_0 + \tfrac{\alpha}{r}BA`} />, so
+		inference costs nothing extra. In PEFT that is <code>merge_and_unload()</code>
 		<Cite id="peft-lora" />.
 	</p>
 	<p>
@@ -99,19 +100,25 @@
 	<p>
 		The practical lesson is that the scale convention decides how the learning rate transfers across
 		ranks. Thinking Machines' 2025 sweep found that with <Tex expr={String.raw`\alpha = 32`} /> and the
-		<Tex expr={String.raw`1/r`} /> convention the best learning rate is roughly independent of rank, and
-		about 10× the best full fine-tuning learning rate <Cite id="lora-without-regret" />.
+		<Tex expr={String.raw`1/r`} /> convention the best learning rate changed by less than 2× between ranks
+		4 and 512, and was about 10× the full fine-tuning optimum (roughly 15× on very short runs)
+		<Cite id="lora-without-regret" />. Rank itself matters less than you might expect: QLoRA found
+		that once all linear layers are adapted, the choice of <Tex expr="r" /> was unrelated to final quality
+		(LLaMA 7B on Alpaca) <Cite id="qlora" />.
 	</p>
 
 	<h2>Which matrices to adapt</h2>
 	<p>
 		The 2021 paper adapted only the query and value projections <Cite id="lora" />. That turned out
 		to leave quality on the table: QLoRA found that LoRA on all linear layers of each block was
-		needed to match full fine-tuning <Cite id="qlora" />, and Thinking Machines found attention-only
-		LoRA underperforms even at a matched parameter count, while the MLP layers matter most <Cite
-			id="lora-without-regret"
-		/>. PEFT's <code>target_modules="all-linear"</code> selects every linear layer except the output
-		head <Cite id="peft-lora" />. On Qwen3-8B at <Tex expr="r = 16" />:
+		needed to match full fine-tuning <Cite id="qlora" />, and Thinking Machines found that
+		attention-only LoRA clearly underperforms MLP-only LoRA at a similar parameter count (rank 256
+		on attention, 0.25B, vs rank 128 on the MLPs, 0.24B), while adding attention on top of the MLPs
+		gave no further gain <Cite id="lora-without-regret" />. PEFT's
+		<code>target_modules="all-linear"</code>
+		selects every linear layer except the output head <Cite id="peft-lora" />. On Qwen3-8B at <Tex
+			expr="r = 16"
+		/>:
 	</p>
 	<table>
 		<thead><tr><th>target_modules</th><th>trainable</th><th>share of 8.19B</th></tr></thead>
@@ -130,12 +137,11 @@
 	<h2>QLoRA: shrink the frozen part too</h2>
 	<p>
 		Once the optimizer state is gone, the frozen bf16 weights are what fills the GPU. QLoRA keeps
-		them in 4 bits and backpropagates through them into bf16 adapters: weights are dequantised on
-		the fly for each matrix multiply, and gradients flow only into <Tex expr="A" /> and <Tex
-			expr="B"
-		/>. With it a 65B model could be fine-tuned on one 48 GB GPU instead of more than 780 GB <Cite
-			id="qlora"
-		/>. Three pieces make it work:
+		them in 4 bits and backpropagates through them into the adapters (bf16 in the paper): weights
+		are dequantised on the fly for each matrix multiply, and gradients flow only into <Tex
+			expr="A"
+		/> and <Tex expr="B" />. With it a 65B model could be fine-tuned on one 48 GB GPU instead of
+		more than 780 GB <Cite id="qlora" />. Three pieces make it work:
 	</p>
 	<ul>
 		<li>
@@ -156,9 +162,12 @@
 	<QuantDemo />
 	<MemoryBudget />
 	<p>
-		Two caveats keep these bars honest. They leave out activations, which for long reasoning traces
-		can be the largest term. And QLoRA trades memory for speed: every matrix multiply first
-		dequantises the 4-bit weights.
+		A few caveats keep these bars honest. They leave out activations, which for long reasoning
+		traces can be the largest term. The bars assume fp32 adapters with fp32 Adam state, a
+		conservative choice. Common recipes also upcast the unquantised parts: PEFT's
+		<code>prepare_model_for_kbit_training</code> casts every remaining 16-bit parameter (embeddings,
+		output head, norms) to fp32, which adds about 2.5 GB on Qwen3-8B <Cite id="peft-kbit" />. And
+		QLoRA trades memory for speed: every matrix multiply first dequantises the 4-bit weights.
 	</p>
 
 	<h2>Does LoRA match full fine-tuning?</h2>
@@ -169,9 +178,9 @@
 	</p>
 	<ul>
 		<li>
-			On small and medium instruction and reasoning datasets, LoRA matches full fine-tuning's sample
-			efficiency and final loss. It falls behind once the dataset holds more information than the
-			adapter can store.
+			On small and medium instruction and reasoning datasets, LoRA performs the same as full
+			fine-tuning. Once the dataset holds more information than the adapter can store, it becomes
+			less sample-efficient and falls behind.
 		</li>
 		<li>
 			For reinforcement learning, even <strong>rank 1</strong> matches full fine-tuning: a policy-gradient
@@ -180,6 +189,9 @@
 		<li>LoRA is less tolerant of large batch sizes, and raising the rank doesn't fix that.</li>
 	</ul>
 	<p>
+		An earlier study framed the trade-off as “LoRA learns less and forgets less”: on code and math,
+		both continued pretraining and instruction tuning, LoRA learned the new domain less well than
+		full fine-tuning but kept more of the base model's other skills <Cite id="lora-learns-less" />.
 		So LoRA is a natural fit for the RL stages of the next chapters (RLHF, RLVR), and a riskier one
 		for very large SFT mixes.
 	</p>
@@ -188,11 +200,10 @@
 	<p>
 		<strong>DoRA</strong> splits each weight into a magnitude vector and a direction, trains the
 		magnitude directly and applies LoRA to the direction only. It reports consistent gains over LoRA
-		at the same rank, and can still be merged, so it adds nothing at inference; training is somewhat
-		slower (<code>use_dora=True</code>) <Cite id="dora" />
-		<Cite id="peft-lora" />. <strong>rsLoRA</strong> only changes the scale factor <Cite
-			id="rslora"
-		/>.
+		at the same rank, and can still be merged, so it adds nothing at inference <Cite id="dora" />.
+		PEFT supports it with <code>use_dora=True</code> and notes extra training overhead <Cite
+			id="peft-lora"
+		/>. <strong>rsLoRA</strong> only changes the scale factor <Cite id="rslora" />.
 	</p>
 
 	<h2>LoRA on Hugging Face</h2>

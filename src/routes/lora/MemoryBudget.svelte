@@ -93,8 +93,9 @@
 		Qwen3-8B (8.19B parameters), memory for weights, gradients and optimizer state only. LoRA
 		adapters ({(adapter / 1e6).toFixed(1)}M parameters at r = {r}) are trained in fp32: 4 + 4 + 8
 		bytes each. QLoRA stores the 6.95B block-linear weights in NF4 (≈4.127 bits with double
-		quantisation) and keeps embeddings and the output head in bf16. Activations come on top and grow
-		with batch size × sequence length; gradient checkpointing trades them for recompute.
+		quantisation) and keeps embeddings and the output head unquantised (bf16; recipes that upcast
+		them to fp32 add ~2.5 GB). Activations come on top and grow with batch size × sequence length;
+		gradient checkpointing trades them for recompute.
 	</figcaption>
 </figure>
 

@@ -227,6 +227,23 @@ export const references: Reference[] = [
 		url: 'https://arxiv.org/abs/1312.6120',
 		venue: 'ICLR 2014',
 		cite: 'Saxe et al., 2013'
+	},
+	{
+		id: 'peft-kbit',
+		authors: 'Hugging Face',
+		year: 2025,
+		title: 'prepare_model_for_kbit_training (PEFT source, src/peft/utils/other.py)',
+		url: 'https://github.com/huggingface/peft/blob/main/src/peft/utils/other.py',
+		cite: 'PEFT source, kbit training'
+	},
+	{
+		id: 'lora-learns-less',
+		authors: 'Dan Biderman, Jacob Portes, Jose Javier Gonzalez Ortiz, et al.',
+		year: 2024,
+		title: 'LoRA Learns Less and Forgets Less',
+		url: 'https://arxiv.org/abs/2405.09673',
+		venue: 'TMLR 2024',
+		cite: 'Biderman et al., 2024'
 	}
 ];
 
