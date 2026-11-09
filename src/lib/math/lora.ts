@@ -12,20 +12,23 @@ export interface LinearShape {
 
 export interface ModelConfig {
 	name: string;
-	/** Total parameter count (embeddings included), for percentages and memory. */
-	totalParams: number;
 	layers: number;
+	/** Per-layer linear projections (the matrices LoRA can target and QLoRA quantises). */
 	linears: LinearShape[];
+	/** Everything else, kept in 16-bit by QLoRA: token embeddings, untied lm_head, norms. */
+	otherParams: number;
 }
 
 /**
  * Qwen3-8B from its config.json: hidden 4096, 36 layers, 32 query heads / 8 KV heads × head_dim 128,
- * intermediate (MLP) size 12288. 8.2B parameters (model card).
+ * intermediate (MLP) size 12288, vocab 151,936, tie_word_embeddings false.
+ * Embedding + lm_head = 2 × 151,936 × 4096; norms = 36 × (2·4096 + 2·128) + 4096.
+ * Total 8,190,735,360 (model card: 8.2B, 6.95B non-embedding).
  */
 export const qwen3_8b: ModelConfig = {
 	name: 'Qwen3-8B',
-	totalParams: 8.2e9,
 	layers: 36,
+	otherParams: 2 * 151_936 * 4096 + 36 * (2 * 4096 + 2 * 128) + 4096,
 	linears: [
 		{ name: 'q_proj', dIn: 4096, dOut: 4096, kind: 'attn' },
 		{ name: 'k_proj', dIn: 4096, dOut: 1024, kind: 'attn' },
@@ -36,6 +39,10 @@ export const qwen3_8b: ModelConfig = {
 		{ name: 'down_proj', dIn: 12288, dOut: 4096, kind: 'mlp' }
 	]
 };
+
+export const linearParams = (cfg: ModelConfig) =>
+	cfg.layers * cfg.linears.reduce((a, l) => a + l.dIn * l.dOut, 0);
+export const totalParams = (cfg: ModelConfig) => linearParams(cfg) + cfg.otherParams;
 
 export const loraParams = (r: number, s: Pick<LinearShape, 'dIn' | 'dOut'>) => r * (s.dIn + s.dOut);
 
@@ -67,29 +74,37 @@ export interface MemoryBreakdown {
 	master: number;
 }
 
-/** NF4 + double quantization: 4 bits + ~0.127 bits of quantization constants per parameter. */
-export const NF4_BITS = 4.127;
+/**
+ * Bits per parameter for 4-bit block quantisation with blocks of 64: one fp32 absmax per block adds
+ * 32/64 = 0.5 bits. Double quantisation stores those constants as 8-bit, in blocks of 256 with one
+ * fp32 constant each: 8/64 + 32/(64·256) ≈ 0.127 bits (QLoRA §3).
+ */
+export const quantBits = (doubleQuant: boolean) =>
+	4 + (doubleQuant ? 8 / 64 + 32 / (64 * 256) : 32 / 64);
+export const NF4_BITS = quantBits(true);
 
 /**
  * Training memory in bytes, excluding activations, KV and framework overhead.
  * Full FT: bf16 weights (2) + bf16 grads (2) + fp32 Adam m,v (8) [+ fp32 master copy (4)].
- * LoRA/QLoRA: frozen base (2 or NF4) + adapters in fp32 with grads and Adam (4 + 4 + 8).
+ * LoRA/QLoRA: frozen base (bf16, or NF4 for the block linears) + adapters in fp32 with grads and Adam (4 + 4 + 8).
  */
 export function trainingMemory(
 	method: Method,
-	totalParams: number,
+	cfg: ModelConfig,
 	adapterParams: number,
 	fp32Master = false
 ): MemoryBreakdown {
+	const N = totalParams(cfg);
 	if (method === 'full') {
 		return {
-			weights: 2 * totalParams,
-			grads: 2 * totalParams,
-			optimizer: 8 * totalParams,
-			master: fp32Master ? 4 * totalParams : 0
+			weights: 2 * N,
+			grads: 2 * N,
+			optimizer: 8 * N,
+			master: fp32Master ? 4 * N : 0
 		};
 	}
-	const base = method === 'lora' ? 2 * totalParams : (NF4_BITS / 8) * totalParams;
+	// QLoRA quantises the transformer-block linears to NF4; embeddings, lm_head and norms stay bf16.
+	const base = method === 'lora' ? 2 * N : (NF4_BITS / 8) * linearParams(cfg) + 2 * cfg.otherParams;
 	return {
 		weights: base + 4 * adapterParams,
 		grads: 4 * adapterParams,

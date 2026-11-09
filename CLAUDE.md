@@ -33,6 +33,9 @@ D3 v7, KaTeX (rendered at prerender time), Vitest. SvelteKit config lives in `vi
 - DPO: implicit reward r = β·log(πθ/πref); a larger β keeps the policy closer to the reference. Loss = −log σ(margin).
 - GRPO advantage = (r_i − mean(r)) / std(r) **within a group** of samples of the same prompt (Dr. GRPO drops the std).
 - LoRA: ΔW = (α/r)·B·A, B initialised to 0, so ΔW = 0 at step 0. Trainable params per matrix = r·(d_in + d_out).
+  Qwen3-8B shapes in `lora.ts` come from its config.json (8,190,735,360 params, untied embeddings; pinned in tests).
+  Memory excludes activations: full FT 12 B/param (16 with fp32 master); adapters 16 B/param (fp32 w+grad+Adam);
+  QLoRA = NF4 (4.127 bit with double quant) on block linears only, embeddings/lm_head stay bf16.
 - Qwen3 template: the final assistant turn of a _training_ example always carries `<think>\n…\n</think>\n\n`
   (empty for non-thinking samples); `enable_thinking` only changes the _generation prompt_. Llama 3.1 always
   emits a system turn with "Cutting Knowledge Date / Today Date" lines. Both are pinned in `templates.spec.ts`.
@@ -53,8 +56,9 @@ D3 v7, KaTeX (rendered at prerender time), Vitest. SvelteKit config lives in `vi
 
 - Workflow per chapter: research note (cheap agent) → build → SOTA review by a separate agent → link check → PR.
 - Never commit to `main` directly; never force-push `main`. Each branch → `gh pr create` → wait for CI
-  (`gh pr checks --watch`) → hand the PR link + summary to the user. **The user reviews and merges every PR on
-  GitHub; the agent never merges.** Start the next branch from `main` once the previous PR is merged; if it isn't
+  (`gh pr checks --watch`). **The agent merges (`gh pr merge --merge`) only if CI is green, there are no conflicts
+  and nothing regressed** (full local suite + visual check of existing chapters); otherwise it hands the PR link +
+  summary to the user, who reviews and merges. Start the next branch from `main` once the previous PR is merged; if it isn't
   merged yet, branch from the previous branch and say so in the PR body.
 - Repo: https://github.com/legentz/llm-base-to-chat-visuals · live: https://legentz.github.io/llm-base-to-chat-visuals/
   (Pages deploys from `main` via `.github/workflows/deploy.yml`).
@@ -74,4 +78,6 @@ D3 v7, KaTeX (rendered at prerender time), Vitest. SvelteKit config lives in `vi
 - Sampler filters run sequentially on the renormalised survivors (top-k → top-p → min-p), as HF does.
 - Prettier reflows long lines in `.svelte` (even splitting `<code>` tags), so scripted string replacement on
   page text silently misses. Edit page prose with the Edit tool against the current file.
+- Headless screenshots with a very tall window (≳2000px) of the 390px iframe wrapper render shifted/cropped on the
+  left: an artifact, not a layout bug. Check overflow via DOM (`scrollWidth`) or screenshot ≤1300px tall.
 - `paths.relative: true` → built HTML uses `./`-relative links, so the same build works at any base path.

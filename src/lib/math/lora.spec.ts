@@ -5,11 +5,14 @@ import {
 	loraParams,
 	mse,
 	NF4_LEVELS,
+	linearParams,
 	presetModules,
+	quantBits,
 	quantizeBlock,
 	qwen3_8b,
 	scaling,
 	totalBytes,
+	totalParams,
 	trainableParams,
 	trainingMemory
 } from './lora';
@@ -33,17 +36,30 @@ describe('LoRA parameter counts', () => {
 	});
 });
 
-describe('training memory (no activations)', () => {
-	const N = 8.2e9;
-	it('full fine-tuning is 12 bytes/param, 16 with an fp32 master copy', () => {
-		expect(totalBytes(trainingMemory('full', N, 0))).toBe(12 * N);
-		expect(totalBytes(trainingMemory('full', N, 0, true))).toBe(16 * N);
+describe('Qwen3-8B shape', () => {
+	it('matches the model card: 8.19B total, 6.95B non-embedding', () => {
+		expect(totalParams(qwen3_8b)).toBe(8_190_735_360);
+		expect(linearParams(qwen3_8b)).toBe(6_945_767_424);
 	});
-	it('LoRA ≈ bf16 base + 16 bytes per adapter param; QLoRA shrinks the base ~4×', () => {
-		const a = 43.6e6;
-		expect(totalBytes(trainingMemory('lora', N, a))).toBeCloseTo(2 * N + 16 * a, 0);
-		const q = totalBytes(trainingMemory('qlora', N, a));
-		expect(q).toBeLessThan(totalBytes(trainingMemory('lora', N, a)) / 3);
+});
+
+describe('training memory (no activations)', () => {
+	const N = totalParams(qwen3_8b);
+	it('full fine-tuning is 12 bytes/param, 16 with an fp32 master copy', () => {
+		expect(totalBytes(trainingMemory('full', qwen3_8b, 0))).toBe(12 * N);
+		expect(totalBytes(trainingMemory('full', qwen3_8b, 0, true))).toBe(16 * N);
+	});
+	it('LoRA = bf16 base + 16 bytes per adapter param', () => {
+		const a = 43_646_976;
+		expect(totalBytes(trainingMemory('lora', qwen3_8b, a))).toBe(2 * N + 16 * a);
+	});
+	it('QLoRA: NF4 block linears + bf16 embeddings ≈ 6.1 GB base', () => {
+		const m = trainingMemory('qlora', qwen3_8b, 0);
+		expect(m.weights / 1e9).toBeCloseTo(6.07, 1);
+	});
+	it('double quantisation: 4.5 → ~4.127 bits per parameter', () => {
+		expect(quantBits(false)).toBe(4.5);
+		expect(quantBits(true)).toBeCloseTo(4.127, 3);
 	});
 });
 
