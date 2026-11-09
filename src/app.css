@@ -1,0 +1,192 @@
+/*
+ * Design tokens. Colours carry meaning across chapters, so keep them semantic:
+ * --c-base is always "the base model", --c-chosen always "preferred answer", etc.
+ */
+:root {
+	--bg: #fbfaf7;
+	--surface: #ffffff;
+	--surface-2: #f3f1ec;
+	--ink: #1d1f24;
+	--ink-2: #4a4f59;
+	--ink-3: #80868f;
+	--line: #e3e0d9;
+	--focus: #2f6fed;
+
+	--c-base: #6b7a99;
+	--c-instruct: #0f9d8a;
+	--c-chosen: #2e9e4f;
+	--c-rejected: #d9485f;
+	--c-reward: #e0a106;
+	--c-ref: #8a5cd6;
+	--c-lora: #d9762b;
+	--c-masked: #c9c5bc;
+	--c-direction: #c2410c;
+
+	--stage-foundation: #6b7a99;
+	--stage-alignment: #0f9d8a;
+	--stage-efficiency: #d9762b;
+	--stage-derivation: #c2410c;
+	--stage-synthesis: #8a5cd6;
+
+	--font: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+	--mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+	--radius: 10px;
+	--shadow: 0 1px 2px rgb(0 0 0 / 0.04), 0 4px 16px rgb(0 0 0 / 0.05);
+	--maxw: 1180px;
+	--prose: 720px;
+
+	color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+	:root:not([data-theme='light']) {
+		--bg: #14161a;
+		--surface: #1c1f25;
+		--surface-2: #242830;
+		--ink: #eceef2;
+		--ink-2: #b4bac4;
+		--ink-3: #7d8591;
+		--line: #2e333c;
+		--focus: #6c9bff;
+		--c-base: #93a3c4;
+		--c-instruct: #2cc4ae;
+		--c-chosen: #4cc46e;
+		--c-rejected: #f06a7f;
+		--c-reward: #f2bc3a;
+		--c-ref: #ab86ee;
+		--c-lora: #f0954f;
+		--c-masked: #4a4f59;
+		--c-direction: #f97340;
+		color-scheme: dark;
+	}
+}
+
+* {
+	box-sizing: border-box;
+}
+
+html {
+	-webkit-text-size-adjust: 100%;
+}
+
+body {
+	margin: 0;
+	background: var(--bg);
+	color: var(--ink);
+	font-family: var(--font);
+	font-size: 16px;
+	line-height: 1.6;
+	-webkit-font-smoothing: antialiased;
+}
+
+a {
+	color: var(--focus);
+	text-underline-offset: 2px;
+}
+
+h1,
+h2,
+h3 {
+	line-height: 1.2;
+	letter-spacing: -0.01em;
+}
+
+code,
+kbd,
+.mono {
+	font-family: var(--mono);
+	font-size: 0.9em;
+}
+
+:focus-visible {
+	outline: 2px solid var(--focus);
+	outline-offset: 2px;
+}
+
+button {
+	font: inherit;
+	color: inherit;
+	cursor: pointer;
+}
+
+.btn {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 6px 12px;
+	border: 1px solid var(--line);
+	border-radius: 8px;
+	background: var(--surface);
+	font-size: 14px;
+}
+.btn:hover {
+	border-color: var(--ink-3);
+}
+.btn[aria-pressed='true'] {
+	background: var(--ink);
+	color: var(--bg);
+	border-color: var(--ink);
+}
+
+.card {
+	background: var(--surface);
+	border: 1px solid var(--line);
+	border-radius: var(--radius);
+	box-shadow: var(--shadow);
+}
+
+.eyebrow {
+	font-size: 12px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+	color: var(--ink-3);
+}
+
+.illustrative {
+	font-size: 12px;
+	color: var(--ink-3);
+	font-style: italic;
+}
+
+/* Long-form text under each hero visual. */
+.prose {
+	max-width: var(--prose);
+	margin: 0 auto;
+	padding: 0 16px;
+}
+.prose h2 {
+	margin-top: 2.4em;
+	font-size: 1.6rem;
+}
+.prose h3 {
+	margin-top: 1.8em;
+	font-size: 1.2rem;
+}
+.prose p,
+.prose li {
+	color: var(--ink-2);
+}
+.prose strong {
+	color: var(--ink);
+}
+
+.formula {
+	margin: 1.2em 0;
+	padding: 14px 18px;
+	background: var(--surface-2);
+	border-radius: 8px;
+	font-family: var(--mono);
+	font-size: 14px;
+	overflow-x: auto;
+	white-space: nowrap;
+}
+
+.sr-only {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+	clip: rect(0 0 0 0);
+	white-space: nowrap;
+}
