@@ -1,4 +1,4 @@
-# CLAUDE.md: Post-Training Explainer
+# CLAUDE.md: LLM Base-to-Chat Visuals (llm-base-to-chat-visuals)
 
 Interactive, simulated explainer (in the style of Transformer Explainer) of LLM post-training: base → SFT → preference
 optimisation → RLVR, plus LoRA, distillation, abliteration and merging. What the product is: see README.md.
@@ -8,7 +8,7 @@ optimisation → RLVR, plus LoRA, distillation, abliteration and merging. What t
 - `npm run dev` · `npm run build` (static → `build/`) · `npm run preview`
 - Before every commit: `npm run format && npm run lint && npm run check && npm test && npm run build`
   (CI in `.github/workflows/ci.yml` runs the same, minus format).
-- Build as GitHub Pages does it: `BASE_PATH=/llm-post-training-explainer npm run build`.
+- Build as GitHub Pages does it: `BASE_PATH=/llm-base-to-chat-visuals npm run build`.
 
 ## Stack & layout
 

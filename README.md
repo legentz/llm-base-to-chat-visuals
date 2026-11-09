@@ -1,4 +1,4 @@
-# Post-Training Explainer
+# LLM Base-to-Chat Visuals
 
 An interactive, **simulated** explainer of how a base (pretrained) LLM becomes a chat / instruct
 model, and how community variants on Hugging Face (LoRA fine-tunes, abliterated models, merges,

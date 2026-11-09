@@ -13,7 +13,7 @@
 </script>
 
 <svelte:head>
-	<title>{chapter.title} · Post-Training Explainer</title>
+	<title>{chapter.title} · LLM Base-to-Chat Visuals</title>
 	<meta name="description" content={chapter.blurb} />
 </svelte:head>
 

@@ -5,7 +5,7 @@
 </script>
 
 <svelte:head>
-	<title>References · Post-Training Explainer</title>
+	<title>References · LLM Base-to-Chat Visuals</title>
 </svelte:head>
 
 <div class="prose">

@@ -11,7 +11,7 @@
 	<div class="inner">
 		<a class="brand" href={resolve('/')}>
 			<span class="dot base"></span><span class="arrow">→</span><span class="dot instruct"></span>
-			<span class="name">Post-Training Explainer</span>
+			<span class="name">Base-to-Chat Visuals</span>
 		</a>
 		<nav aria-label="Chapters">
 			<ol>
