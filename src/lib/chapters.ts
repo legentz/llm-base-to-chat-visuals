@@ -45,7 +45,7 @@ export const chapters: Chapter[] = [
 		short: 'SFT',
 		blurb: 'Teach the format: imitate demonstrations, learn only on assistant tokens.',
 		stage: 'alignment',
-		ready: false
+		ready: true
 	},
 	{
 		slug: 'lora',
