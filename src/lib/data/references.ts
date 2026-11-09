@@ -114,6 +114,48 @@ export const references: Reference[] = [
 		url: 'https://arxiv.org/abs/2407.01082',
 		venue: 'ICLR 2025',
 		cite: 'Nguyen et al., 2024'
+	},
+	{
+		id: 'lima',
+		authors: 'Chunting Zhou, Pengfei Liu, Puxin Xu, et al.',
+		year: 2023,
+		title: 'LIMA: Less Is More for Alignment',
+		url: 'https://arxiv.org/abs/2305.11206',
+		venue: 'NeurIPS 2023',
+		cite: 'Zhou et al., 2023'
+	},
+	{
+		id: 'tulu3',
+		authors: 'Nathan Lambert, Jacob Morrison, Valentina Pyatkin, Shengyi Huang, et al.',
+		year: 2024,
+		title: 'Tulu 3: Pushing Frontiers in Open Language Model Post-Training',
+		url: 'https://arxiv.org/abs/2411.15124',
+		cite: 'Lambert et al., 2024'
+	},
+	{
+		id: 'flan',
+		authors: 'Jason Wei, Maarten Bosma, Vincent Y. Zhao, Kelvin Guu, et al.',
+		year: 2021,
+		title: 'Finetuned Language Models Are Zero-Shot Learners',
+		url: 'https://arxiv.org/abs/2109.01652',
+		venue: 'ICLR 2022',
+		cite: 'Wei et al., 2021'
+	},
+	{
+		id: 'trl-sft',
+		authors: 'Hugging Face',
+		year: 2025,
+		title: 'SFT Trainer (TRL documentation)',
+		url: 'https://huggingface.co/docs/trl/sft_trainer',
+		cite: 'TRL docs, SFT Trainer'
+	},
+	{
+		id: 'smollm2',
+		authors: 'Loubna Ben Allal, Anton Lozhkov, Elie Bakouch, et al.',
+		year: 2025,
+		title: 'SmolLM2: When Smol Goes Big — Data-Centric Training of a Small Language Model',
+		url: 'https://arxiv.org/abs/2502.02737',
+		cite: 'Ben Allal et al., 2025'
 	}
 ];
 
