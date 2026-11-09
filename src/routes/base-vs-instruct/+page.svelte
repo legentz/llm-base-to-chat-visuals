@@ -60,21 +60,21 @@
 	<h2>Modern “base” models are not raw</h2>
 	<p>
 		The GPT-3-era picture of a base model as pure web text is out of date. Current recipes add a
-		short <strong>mid-training</strong> stage after the main pretraining run: a few percent of the
-		compute on up-sampled high-quality, math, code, reasoning and instruction-like data, with the
-		learning rate annealed toward zero and the context window extended. Llama 3 anneals on
-		high-quality data at the end of pretraining <Cite id="llama3" />. OLMo 2 names the stage
-		explicitly and spends 5–10% of training FLOPs on it <Cite id="olmo2" />. Qwen3 runs a dedicated
-		reasoning stage and then a long-context stage <Cite id="qwen3" />. SmolLM3 adds a 140B-token
-		reasoning mid-training phase <Cite id="smollm3" />.
+		short <strong>mid-training</strong> stage after the main pretraining run: typically a few
+		percent of the tokens, spent on up-sampled high-quality, math, code, reasoning and
+		instruction-like data, with the learning rate annealed toward zero and the context window
+		extended. Llama 3 anneals on high-quality data at the end of pretraining <Cite id="llama3" />.
+		OLMo 2 names the stage explicitly and spends 5–10% of training FLOPs on it <Cite id="olmo2" />.
+		Qwen3 runs a dedicated reasoning stage and then a long-context stage <Cite id="qwen3" />.
+		SmolLM3 adds a 140B-token reasoning mid-training phase <Cite id="smollm3" />.
 	</p>
 	<StageTimeline />
 	<p>
-		One finding from Olmo 3 is worth knowing. Putting the chat special tokens (<code
-			>&lt;|im_start|&gt;</code
-		>, <code>&lt;|im_end|&gt;</code>) into mid-training data made the base model emit them at
-		inference, and GSM8K fell from 49.4 to 0. The same data in a plain-text template did not have
-		that effect, so the team keeps special tokens out until SFT
+		One finding from Olmo 3 is worth knowing. In a small annealing experiment on SFT data, keeping
+		the chat special tokens (<code>&lt;|im_start|&gt;</code>, <code>&lt;|im_end|&gt;</code>) made
+		the model emit them at inference. GSM8K fell from 49.4 to 0, mostly because answer parsing
+		broke. The same data with plain text in place of the special tokens scored 46.0. So the team
+		strips the template from its mid-training instruction data and leaves special tokens to SFT
 		<Cite id="olmo3" />. The practical consequence: 2025-era base checkpoints have already seen
 		plenty of question-and-answer text and will sometimes answer. The demo above shows the typical
 		behaviour, not a guarantee.
@@ -124,7 +124,8 @@
 		<thead><tr><th>Family</th><th>Base</th><th>Post-trained</th></tr></thead>
 		<tbody>
 			<tr
-				><td>Qwen3</td><td><code>Qwen/Qwen3-8B-Base</code></td><td><code>Qwen/Qwen3-8B</code></td
+				><td>Qwen3</td><td><code>Qwen/Qwen3-8B-Base</code></td><td
+					><code>Qwen/Qwen3-8B</code> (hybrid thinking; no separate Instruct)</td
 				></tr
 			>
 			<tr

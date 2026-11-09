@@ -44,28 +44,35 @@ export function applySampler(logits: number[], s: SamplerSettings): SampledDistr
 	const tempered = softmax(logits, s.temperature);
 	const order = tempered.map((_, i) => i).sort((a, b) => tempered[b] - tempered[a]);
 	const kept = tempered.map(() => true);
+	// Like HF's logits processors, each filter sees the distribution renormalised over the
+	// tokens that survived the previous filter (top-k → top-p → min-p).
+	const survivingMass = () => tempered.reduce((a, p, i) => a + (kept[i] ? p : 0), 0);
 
 	if (s.topK > 0) order.slice(s.topK).forEach((i) => (kept[i] = false));
 
 	if (s.topP < 1) {
+		const mass = survivingMass();
 		let cum = 0;
 		for (const i of order) {
+			if (!kept[i]) continue;
+			// The token that crosses the threshold is kept (same as HF / the nucleus paper).
 			if (cum >= s.topP) kept[i] = false;
-			cum += tempered[i];
+			cum += tempered[i] / mass;
 		}
 	}
 
 	if (s.minP > 0) {
+		// Ratios to p_max don't change under renormalisation, so the raw tempered probs suffice.
 		const threshold = s.minP * tempered[order[0]];
 		tempered.forEach((p, i) => {
 			if (p < threshold) kept[i] = false;
 		});
 	}
 
-	// The most likely token always survives, whatever the settings.
+	// The most likely token always survives, whatever the settings (min_tokens_to_keep = 1).
 	kept[order[0]] = true;
 
-	const mass = tempered.reduce((a, p, i) => a + (kept[i] ? p : 0), 0);
+	const mass = survivingMass();
 	const final = tempered.map((p, i) => (kept[i] ? p / mass : 0));
 	return { tempered, kept, final };
 }

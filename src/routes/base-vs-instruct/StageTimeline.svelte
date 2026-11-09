@@ -60,8 +60,9 @@
 		</div>
 	{/each}
 	<figcaption>
-		On a linear scale the later stages are barely visible. They're about 1–3% of the tokens, but
-		they shape what a released “base” checkpoint looks like.
+		On a linear scale the later stages are barely visible. They're about 1–3% of the tokens (OLMo 2
+		budgets 5–10% of FLOPs for mid-training), but they shape what a released “base” checkpoint looks
+		like.
 	</figcaption>
 </figure>
 

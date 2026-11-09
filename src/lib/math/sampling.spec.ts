@@ -30,6 +30,11 @@ describe('truncation', () => {
 	it('min-p = 0.1 keeps tokens ≥ 0.042, i.e. 5 tokens', () => {
 		expect(keptCount(applySampler(logits, { ...defaultSampler, minP: 0.1 }).kept)).toBe(5);
 	});
+	it('applies top-p to the top-k set renormalised, as HF does', () => {
+		// top-2 renormalised: 0.667, 0.333 → the first already reaches p = 0.6, so only 1 is kept.
+		const out = applySampler(logits, { ...defaultSampler, topK: 2, topP: 0.6 });
+		expect(keptCount(out.kept)).toBe(1);
+	});
 	it('renormalises the kept set and always keeps the argmax', () => {
 		const { final } = applySampler(logits, { ...defaultSampler, topK: 2 });
 		expect(final.reduce((a, b) => a + b, 0)).toBeCloseTo(1, 10);
