@@ -4,7 +4,7 @@
 </script>
 
 <svelte:head>
-	<title>Post-Training Explainer: from base model to chat model</title>
+	<title>LLM Base-to-Chat Visuals: from base model to chat model</title>
 	<meta
 		name="description"
 		content="Interactive, simulated walkthrough of how base LLMs become instruct/chat models: SFT, LoRA, RLHF, DPO, RLVR, distillation, abliteration and merging."

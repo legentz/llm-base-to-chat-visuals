@@ -1,5 +1,5 @@
 {
-	"name": "llm-post-training-explainer",
+	"name": "llm-base-to-chat-visuals",
 	"version": "0.0.1",
 	"private": true,
 	"type": "module",
