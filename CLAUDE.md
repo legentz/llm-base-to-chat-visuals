@@ -49,7 +49,11 @@ D3 v7, KaTeX (rendered at prerender time), Vitest. SvelteKit config lives in `vi
 ## Working agreement
 
 - Workflow per chapter: research note (cheap agent) → build → SOTA review by a separate agent → link check → PR.
-- Never commit to `main` directly; never force-push `main`.
+- Never commit to `main` directly; never force-push `main`. Until the GitHub remote exists, a "PR" is a local
+  `git merge --no-ff <branch>` into `main` after the full check suite passes; push `main` + branches once `gh` is authed.
+- Visual check without the Chrome extension: `npx http-server@14.1.1 build -p 4174 -s` then headless Chrome
+  `--screenshot`. Headless Chrome won't go below 500px wide, so test 390px mobile through a same-origin wrapper
+  (`build/_mobile.html` with a 390px iframe). `vite preview` dies when `build/` is rebuilt under it.
 
 ## Traps already hit
 
@@ -58,4 +62,7 @@ D3 v7, KaTeX (rendered at prerender time), Vitest. SvelteKit config lives in `vi
 - `resolve()` from `$app/paths` takes paths **without** a leading slash for pathnames (`resolve('references/')`);
   chapter links go through `chapterHref(slug)`. There's no `base` export anymore. The ESLint rule
   `svelte/no-navigation-without-resolve` is off because it can't see through the helpers.
+- Illustrative token data (`generations.ts`) uses `tok:p|tok:p*` steps: the splitter ignores `|` inside `<|…|>`,
+  and a literal `:` token is written `::0.74`.
+- Sampler filters run sequentially on the renormalised survivors (top-k → top-p → min-p), as HF does.
 - `paths.relative: true` → built HTML uses `./`-relative links, so the same build works at any base path.
