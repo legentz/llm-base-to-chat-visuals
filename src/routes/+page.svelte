@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { chapters, chapterHref, stageLabel } from '#lib/chapters.js';
+	import PipelineMap from '#lib/components/PipelineMap.svelte';
 </script>
 
 <svelte:head>
@@ -20,6 +21,11 @@
 	</p>
 </section>
 
+<section class="map-wrap">
+	<PipelineMap />
+</section>
+
+<h2 class="toc-title">Chapters</h2>
 <ol class="toc">
 	{#each chapters as c (c.slug)}
 		<li class="card" style:--stage={`var(--stage-${c.stage})`}>
@@ -49,6 +55,17 @@
 		font-size: 1.2rem;
 		color: var(--ink-2);
 		max-width: 60ch;
+	}
+	.map-wrap {
+		max-width: var(--maxw);
+		margin: 0 auto 48px;
+		padding: 0 16px;
+	}
+	.toc-title {
+		max-width: var(--maxw);
+		margin: 0 auto 16px;
+		padding: 0 16px;
+		font-size: 1.4rem;
 	}
 	.toc {
 		list-style: none;
