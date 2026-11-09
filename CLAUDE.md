@@ -33,6 +33,9 @@ D3 v7, KaTeX (rendered at prerender time), Vitest. SvelteKit config lives in `vi
 - DPO: implicit reward r = β·log(πθ/πref); a larger β keeps the policy closer to the reference. Loss = −log σ(margin).
 - GRPO advantage = (r_i − mean(r)) / std(r) **within a group** of samples of the same prompt (Dr. GRPO drops the std).
 - LoRA: ΔW = (α/r)·B·A, B initialised to 0, so ΔW = 0 at step 0. Trainable params per matrix = r·(d_in + d_out).
+- Qwen3 template: the final assistant turn of a _training_ example always carries `<think>\n…\n</think>\n\n`
+  (empty for non-thinking samples); `enable_thinking` only changes the _generation prompt_. Llama 3.1 always
+  emits a system turn with "Cutting Knowledge Date / Today Date" lines. Both are pinned in `templates.spec.ts`.
 - Abliteration: direction r̂ = normalised diff-of-means(harmful, harmless) at a chosen layer; ablation x' = x − r̂r̂ᵀx.
   Educational only: explain the geometry and trade-offs. No runnable recipes for real models.
 
@@ -65,4 +68,6 @@ D3 v7, KaTeX (rendered at prerender time), Vitest. SvelteKit config lives in `vi
 - Illustrative token data (`generations.ts`) uses `tok:p|tok:p*` steps: the splitter ignores `|` inside `<|…|>`,
   and a literal `:` token is written `::0.74`.
 - Sampler filters run sequentially on the renormalised survivors (top-k → top-p → min-p), as HF does.
+- Prettier reflows long lines in `.svelte` (even splitting `<code>` tags), so scripted string replacement on
+  page text silently misses. Edit page prose with the Edit tool against the current file.
 - `paths.relative: true` → built HTML uses `./`-relative links, so the same build works at any base path.

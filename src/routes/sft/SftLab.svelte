@@ -19,8 +19,13 @@
 	let assistantOnly = $state(true);
 	let step = $state(0);
 
+	// Training view: the toggle picks a thinking sample (with reasoning) vs a non-thinking one.
+	// Inference view: it is enable_thinking, which only changes the generation prompt.
+	const conv = $derived(
+		thinking ? conversation : conversation.map(({ role, content }) => ({ role, content }))
+	);
 	const tokens = $derived(
-		renderChat(conversation, {
+		renderChat(conv, {
 			template,
 			addGenerationPrompt: inference,
 			enableThinking: thinking && template === 'chatml'
@@ -88,7 +93,7 @@
 		</div>
 		<label class="toggle" class:disabled={template !== 'chatml'}>
 			<input type="checkbox" bind:checked={thinking} disabled={template !== 'chatml'} />
-			enable_thinking
+			{inference ? 'enable_thinking' : 'thinking sample'}
 		</label>
 		<label class="toggle" class:disabled={inference}>
 			<input type="checkbox" bind:checked={assistantOnly} disabled={inference} />

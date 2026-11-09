@@ -6,11 +6,12 @@ const conv: Message[] = [
 	{ role: 'user', content: 'What is the capital of France?' },
 	{ role: 'assistant', content: 'The capital of France is Paris.', reasoning: 'Easy: Paris.' }
 ];
+const noReasoning: Message[] = conv.map(({ role, content }) => ({ role, content }));
 const text = (ts: { text: string }[]) => ts.map((x) => x.text).join('');
 
 describe('chat templates', () => {
 	it('renders ChatML exactly like the Qwen3 template (non-thinking training example)', () => {
-		const out = renderChat(conv, {
+		const out = renderChat(noReasoning, {
 			template: 'chatml',
 			addGenerationPrompt: false,
 			enableThinking: false
@@ -22,15 +23,17 @@ describe('chat templates', () => {
 		);
 	});
 
-	it('wraps the reasoning trace in <think> … </think> when thinking is on', () => {
-		const out = renderChat(conv, {
-			template: 'chatml',
-			addGenerationPrompt: false,
-			enableThinking: true
-		});
-		expect(text(out)).toContain(
-			'<|im_start|>assistant\n<think>\nEasy: Paris.\n</think>\n\nThe capital'
-		);
+	it('keeps the final turn reasoning whatever enable_thinking says (it only affects the prompt)', () => {
+		for (const enableThinking of [true, false]) {
+			const out = renderChat(conv, {
+				template: 'chatml',
+				addGenerationPrompt: false,
+				enableThinking
+			});
+			expect(text(out)).toContain(
+				'<|im_start|>assistant\n<think>\nEasy: Paris.\n</think>\n\nThe capital'
+			);
+		}
 	});
 
 	it('appends the generation prompt with an empty think block when thinking is off', () => {
@@ -43,16 +46,31 @@ describe('chat templates', () => {
 		expect(text(out)).not.toContain('Paris');
 	});
 
-	it('renders Llama 3 headers and <|eot_id|>', () => {
+	it('renders Llama 3.1 headers, the knowledge-cutoff preamble and <|eot_id|>', () => {
 		const out = renderChat(conv, {
 			template: 'llama3',
 			addGenerationPrompt: false,
 			enableThinking: false
 		});
 		expect(
-			text(out).startsWith('<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\n')
+			text(out).startsWith(
+				'<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\n' +
+					'Cutting Knowledge Date: December 2023\nToday Date: 26 Jul 2024\n\n' +
+					'You are a helpful assistant.<|eot_id|>'
+			)
 		).toBe(true);
 		expect(text(out).endsWith('Paris.<|eot_id|>')).toBe(true);
+	});
+
+	it('Llama 3.1 adds a system turn even when none is given', () => {
+		const out = renderChat(noReasoning.slice(1), {
+			template: 'llama3',
+			addGenerationPrompt: true,
+			enableThinking: false
+		});
+		expect(text(out)).toContain(
+			'<|start_header_id|>system<|end_header_id|>\n\nCutting Knowledge Date'
+		);
 	});
 
 	it('marks only the assistant span (content + end-of-turn token) as trainable', () => {
